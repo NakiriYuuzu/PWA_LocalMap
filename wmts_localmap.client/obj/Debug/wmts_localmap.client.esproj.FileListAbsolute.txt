@@ -1,0 +1,1 @@
+D:\Coding\C\WMTS_LocalMap\wmts_localmap.client\obj\Debug\wmts_localmap.client.esproj.CoreCompileInputs.cache

@@ -1,0 +1,10 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:5173",
+"RedirectUrl": "",
+"LaunchCommand": "npm run dev",
+"WorkingDirectory": "D:\\Coding\\C\\WMTS_LocalMap\\WMTS_LocalMap.Server\\..\\wmts_localmap.client",
+"MaxTimeoutInSeconds": "120",
+"KeepRunning": "false"
+}
+}

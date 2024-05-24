@@ -1,0 +1,6 @@
+@WMTS_LocalMap.Server_HostAddress = http://localhost:5053
+
+GET {{WMTS_LocalMap.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

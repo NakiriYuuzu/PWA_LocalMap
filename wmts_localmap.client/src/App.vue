@@ -92,7 +92,7 @@ onMounted(() => {
       center: [121.2, 23.5],
       zoom: 0,
       minZoom: 0,
-      maxZoom: 10,
+      maxZoom: 17,
       zoomFactor: 2
     })
   })

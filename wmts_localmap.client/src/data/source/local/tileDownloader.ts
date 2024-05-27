@@ -32,25 +32,25 @@ export async function getTile(url: string) {
     return await store.get(url)
 }
 
-export async function downloadAndSaveTiles(bbox: number[], zoomLevels: number[]) {
+export async function downloadAndSaveTiles(bbox: number[], zoomSize: number) {
+    const zoomLevels = Array.from({ length: zoomSize + 1 }, (_, i) => i)
     const urls = generateTileUrls(bbox, zoomLevels)
     for (const url of urls) {
         const response = await fetch(url)
-        console.log(response)
         const blob = await response.blob()
         await saveTile(url, blob)
     }
 }
 
 function generateTileUrls(bbox: number[], zoomLevels: number[]): string[] {
-    const projection = getProjection('EPSG:3857')!
-    const projectionExtent = projection.getExtent()
-    const size = getWidth(projectionExtent) / 256
-    const resolutions = new Array(19)
-    const matrixIds = new Array(19)
-    for (let z = 0; z < 19; ++z) {
-        resolutions[z] = size / Math.pow(2, z)
-        matrixIds[z] = z
+    const projection = getProjection('EPSG:3857')!;
+    const projectionExtent = projection.getExtent();
+    const size = getWidth(projectionExtent) / 256;
+    const resolutions = new Array(zoomLevels.length);
+    const matrixIds = new Array(zoomLevels.length);
+    for (let z = 0; z < zoomLevels.length; ++z) {
+        resolutions[z] = size / Math.pow(2, z);
+        matrixIds[z] = z.toString();
     }
 
     const tileGrid = new WMTSTileGrid({
@@ -60,27 +60,26 @@ function generateTileUrls(bbox: number[], zoomLevels: number[]): string[] {
     });
 
     const urls: string[] = [];
-    const [minX, minY, maxX, maxY] = bbox
-    
-    const minCoord = fromLonLat([minX, minY], 'EPSG:3857')
-    const maxCoord = fromLonLat([maxX, maxY], 'EPSG:3857')
+    const [minX, minY, maxX, maxY] = bbox;
+    const minCoord = fromLonLat([minX, minY], 'EPSG:3857');
+    const maxCoord = fromLonLat([maxX, maxY], 'EPSG:3857');
 
     for (const z of zoomLevels) {
-        const topLeft = [minCoord[0], maxCoord[1]]
-        const bottomRight = [maxCoord[0], minCoord[1]]
-        
-        const topLeftTile = tileGrid.getTileCoordForCoordAndZ(topLeft, z)
-        const bottomRightTile = tileGrid.getTileCoordForCoordAndZ(bottomRight, z)
+        const topLeft = [minCoord[0], maxCoord[1]];
+        const bottomRight = [maxCoord[0], minCoord[1]];
+
+        const topLeftTile = tileGrid.getTileCoordForCoordAndZ(topLeft, z);
+        const bottomRightTile = tileGrid.getTileCoordForCoordAndZ(bottomRight, z);
 
         for (let x = topLeftTile[1]; x <= bottomRightTile[1]; x++) {
-            for (let y = topLeftTile[2]; y >= bottomRightTile[2]; y--) {
+            for (let y = topLeftTile[2]; y <= bottomRightTile[2]; y++) {
                 const url = URL.replace('{TileMatrix}', String(z))
-                                      .replace('{TileRow}', String(y))
-                                      .replace('{TileCol}', String(x))
-                urls.push(url)
+                    .replace('{TileRow}', String(y))
+                    .replace('{TileCol}', String(x));
+                urls.push(url);
             }
         }
     }
 
-    return urls
+    return urls;
 }

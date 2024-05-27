@@ -64,7 +64,7 @@ export default defineConfig({
                         options: {
                             cacheName: 'image-cache',
                             expiration: {
-                                maxEntries: 10000, // 設定可以儲存的檔案數量
+                                maxEntries: 100000, // 設定可以儲存的檔案數量
                                 maxAgeSeconds: 60 * 60 * 24 * 365, // 1 年
                             },
                         }
